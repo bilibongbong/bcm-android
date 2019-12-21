@@ -186,7 +186,6 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
     }
 
     private fun syncMyMemberInfo() {
-        //同步member info
         GroupLogic.getGroupMemberInfo(groupId, AMESelfData.uid) { member, error ->
             if (member != null) {
                 try {
@@ -312,7 +311,7 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
         val ctrlList = ArrayList<AmeGroupMemberInfo>()
 
         if (!TextUtils.isEmpty(modelCache.info.key)) {
-            //第一页，包含检索，添加成员，添加订阅，邀请成员入口
+            
             ctrlList.add(AmeGroupMemberInfo.MEMBER_SEARCH)
             ctrlList.add(AmeGroupMemberInfo.MEMBER_ADD_MEMBER)
         }

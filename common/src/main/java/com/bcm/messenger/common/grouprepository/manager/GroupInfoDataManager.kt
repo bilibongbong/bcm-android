@@ -165,7 +165,7 @@ object GroupInfoDataManager {
         }
     }
 
-    //更新群权限信息，群主和管理员可操作
+    //，
     fun updateGroupPermission(gid: Long, permission: Int) {
         val info = queryOneGroupInfo(gid)
         if (info != null) {
@@ -195,16 +195,16 @@ object GroupInfoDataManager {
     }
 
     /**
-     * 更新群的分享短链
+     * 
      */
     fun updateGroupShareShortLink(gid: Long, shareLink: String) {
         getDao().updateShareShortLink(gid, shareLink)
     }
 
-    //必需先取出该信息，更新相应字段，再去插入，切勿构造 GroupInfo插入，除非之前是空的
-    //插入一条新群组信息
+    //，，， GroupInfo，
+    //
     fun insertGroupInfo(groupInfo: GroupInfo) {
-        //同时更新到recipient数据库
+        //recipient
         val recipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, groupInfo.gid)
         Repository.getRecipientRepo()?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
 
@@ -231,12 +231,12 @@ object GroupInfoDataManager {
         return GroupInfoTransform.transformToModel(info)
     }
 
-    //用于更新群信息时使用
+    //
     fun queryOneGroupInfo(gid: Long): GroupInfo? {
         return getDao().loadGroupInfoByGid(gid)
     }
 
-    //用于更新群信息时使用
+    //
     fun queryGroupInfoList(gidList: List<Long>): List<GroupInfo> {
         return getDao().loadGroupInfoListByGid(gidList.toLongArray())
     }
@@ -247,7 +247,7 @@ object GroupInfoDataManager {
 
 
     /**
-     * 获取群信息（同步）
+     * （）
      */
     fun getGroupInfo(groupId: Long): AmeGroupInfo? {
         return GroupInfoDataManager.queryOneAmeGroupInfo(groupId)

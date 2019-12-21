@@ -18,7 +18,7 @@ public interface GroupInfoDao {
 
 
     /**
-     * 拿到群信息列表数据
+     * 
      *
      * @return
      */
@@ -26,7 +26,7 @@ public interface GroupInfoDao {
     List<GroupInfo> loadAll();
 
     /**
-     * 根据 gid 查询到群信息
+     *  gid 
      *
      * @param gid
      * @return
@@ -38,7 +38,7 @@ public interface GroupInfoDao {
     List<GroupInfo> loadGroupInfoListByGid(long[] gidList);
 
     /**
-     * 根据 shareUrl 查询到群信息
+     *  shareUrl 
      *
      * @param shareUrl
      * @return
@@ -48,7 +48,7 @@ public interface GroupInfoDao {
 
 
     /**
-     * 更新群消息的密钥
+     * 
      *
      * @return
      */
@@ -56,7 +56,7 @@ public interface GroupInfoDao {
     void updateGroupKey(long gid, long keyVersion, String key);
 
     /**
-     * 更新群Info的密钥
+     * Info
      *
      * @return
      */
@@ -67,7 +67,7 @@ public interface GroupInfoDao {
     void setProfileEncrypted(long gid, boolean isEncrypted);
 
     /**
-     * 查询群数量
+     * 
      *
      * @return The number of group
      */

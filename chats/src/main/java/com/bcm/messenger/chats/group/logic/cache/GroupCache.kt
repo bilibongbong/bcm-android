@@ -136,7 +136,7 @@ class GroupCache(val cacheReady: () -> Unit) {
         if (group.role != role) {
             group.role = role
             if (role == AmeGroupMemberInfo.VISITOR) {
-                //已经不在群里了，清掉直播状态
+            
                 GroupLiveInfoManager.getInstance().deleteLiveInfoWhenLeaveGroup(gid)
                 GroupInfoDataManager.clearShareSetting(group.gid)
             }

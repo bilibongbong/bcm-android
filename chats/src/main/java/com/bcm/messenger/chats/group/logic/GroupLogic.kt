@@ -593,7 +593,7 @@ object GroupLogic {
                         if (TextUtils.isEmpty(dbGroupInfo.channel_key)
                                 && TextUtils.isEmpty(dbGroupInfo.currentKey)
                                 && !dbGroupInfo.isNewGroup) {
-                            ALog.i(TAG, "error group: key not found 等待分发密钥")
+                            ALog.i(TAG, "error group: key not found, waiting key")
                         }
                         gList.add(dbGroupInfo)
                     }
@@ -624,7 +624,7 @@ object GroupLogic {
                                 }
                     } else {
                         val gInfo = groupCache.getGroupInfo(groupId)
-                        if (null != gInfo && (groupEntity.code == 110024 || groupEntity.code == 11006)) {//权限不足
+                        if (null != gInfo && (groupEntity.code == 110024 || groupEntity.code == 11006)) {//kicked out
                             if (gInfo.role != AmeGroupMemberInfo.VISITOR) {
                                 groupCache.updateRole(groupId, AmeGroupMemberInfo.VISITOR)
                                 GroupMessageLogic.systemNotice(groupId, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_GROUP_ILLEGAL))
@@ -686,7 +686,7 @@ object GroupLogic {
         if (dbGroupInfo.role == AmeGroupMemberInfo.OWNER) {
             if ((oldSecretKey != dbGroupInfo.infoSecret || TextUtils.isEmpty(dbGroupInfo.shareCodeSetting))) {
                 updateShareSetting(dbGroupInfo.gid, false) { succeed, shareCode, error ->
-                    ALog.i(TAG, "parseGroupInfo 补齐group info succeed:$succeed $error")
+                    ALog.i(TAG, "parseGroupInfo adjust group info succeed:$succeed $error")
                 }
             } else if (groupCache.isBroadcastSharingData(info.gid)) {
                 broadcastShareSettingRefresh(info.gid)
@@ -756,7 +756,7 @@ object GroupLogic {
                     if (stash.friendList.isNotEmpty()) {
                         val dbGroupInfo = stash.groupInfo!!
                         val password = dbGroupInfo.currentKey.toByteArray().base64Decode()
-                        //获取群密钥
+                        
                         val infoSecret = GroupMessageEncryptUtils.decodeGroupPassword(dbGroupInfo.infoSecret)
                         val listSecret = BCMEncryptUtils.generateMembersEncryptKeys(recipientList.mapNotNull { it.identityKey }, infoSecret)
                         val proofList = if (dbGroupInfo.isNewGroup) {
@@ -1471,7 +1471,7 @@ object GroupLogic {
             val joinList = v.map { it.uid }
 
             if (!TextUtils.isEmpty(inviter)) {
-                //重复拉下来的邀请内容不处理
+                
                 val exist = BcmGroupJoinManager.getJoinInfoByInviterData(gid, inviter, v[0].uid, v[0].timestamp)
                 if (null != exist) {
                     continue
@@ -1587,7 +1587,6 @@ object GroupLogic {
             if (firstPage) {
                 UserDataManager.clear(gid)
 
-                //把群主加进去
                 val owner = groupCache.getGroupInfo(gid)?.owner
                 if (owner?.isNotEmpty() == true) {
                     val ownerMember = AmeGroupMemberInfo()
@@ -2023,7 +2022,7 @@ object GroupLogic {
                         val groupInfo = it.first
 
                         if (!groupInfo.isNewGroup) {
-                            throw Exception("旧群不需要同步密码")
+                            throw Exception("v2 version group, key not need changed")
                         }
 
                         if (keys?.isNotEmpty() == true) {
@@ -2177,7 +2176,7 @@ object GroupLogic {
                 it.onNext(groupInfo)
                 it.onComplete()
             } else {
-                it.onError(GroupException("旧群不需要刷密码"))
+                it.onError(GroupException("v2 version group"))
             }
         }.subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
