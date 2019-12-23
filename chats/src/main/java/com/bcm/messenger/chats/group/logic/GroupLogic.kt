@@ -861,7 +861,7 @@ object GroupLogic {
     }
 
 
-    fun updateGroup(gid: Long, avatar: String, result: (isSuccess: Boolean, error: String?) -> Unit): Boolean {
+    fun updateGroupAvatar(gid: Long, avatar: String, result: (isSuccess: Boolean, error: String?) -> Unit): Boolean {
         if (gid <= 0) {
             ALog.w(TAG, "Gid is smaller than or equals 0")
             return false
@@ -874,6 +874,7 @@ object GroupLogic {
                     ALog.i(TAG, "result:${it.code},  msg:${it.msg}")
                     if (it.isSuccess) {
                         GroupInfoDataManager.updateGroupShareShortLink(gid, "")
+                        groupCache.updateGroupAvatar(gid, avatar)
                     } else {
                         if (110005 == it.code) {
                             throw GroupException(AppContextHolder.APP_CONTEXT.getString(R.string.chats_group_name_too_long))
@@ -886,7 +887,7 @@ object GroupLogic {
                 .subscribe({
                     result(true, "")
                 }, {
-                    ALog.e(TAG, "updateGroup error", it)
+                    ALog.e(TAG, "updateGroupAvatar error", it)
                     result(false, GroupException.error(it, AppUtil.getString(R.string.common_error_failed)))
                 })
         return true
@@ -1554,8 +1555,10 @@ object GroupLogic {
                 key = Base64.encodeBytes((tempKeyPair.publicKey as DjbECPublicKey).publicKey)
             }
             val profileJson = GsonUtils.toJson(profileBean)
-            Base64.encodeBytes(profileJson.toByteArray())
+            it.onNext(Base64.encodeBytes(profileJson.toByteArray()))
+            it.onComplete()
         }.subscribeOn(AmeDispatcher.ioScheduler)
+                .observeOn(AmeDispatcher.ioScheduler)
                 .flatMap {
                     GroupManagerCore.updateGroupNotice(groupId, it)
                             .subscribeOn(AmeDispatcher.ioScheduler)
@@ -1990,8 +1993,8 @@ object GroupLogic {
 
     }
 
-    fun updateGroupNameAndAvatar2Cache(gid: Long, combineName: String, chnCombineName: String, path: String?) {
-        groupCache.updateGroupNameAndAvatar2Cache(gid, combineName, chnCombineName, path)
+    fun updateAutoGenGroupNameAndAvatar(gid: Long, combineName: String, chnCombineName: String, path: String?) {
+        groupCache.updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, path)
         updateGroupFinderSource()
     }
 
@@ -2276,7 +2279,8 @@ object GroupLogic {
     }
 
     fun updateGroupNameAndIcon(gid: Long, newName: String, newIcon: String) {
-        groupCache.updateGroupNameAndAvatar(gid, newName, newIcon)
+        groupCache.updateGroupAvatar(gid, newIcon)
+        groupCache.updateGroupName(gid, newName)
     }
 
     fun uploadEncryptedNameAndNotice(groupId: Long, result: (succeed: Boolean) -> Unit) {
@@ -2371,6 +2375,7 @@ object GroupLogic {
                     ALog.i(TAG, "result:${it.code},  msg:${it.msg}")
                     if (it.isSuccess) {
                         GroupInfoDataManager.updateGroupShareShortLink(gid, "")
+                        groupCache.updateGroupName(gid, name)
                     } else {
                         if (110005 == it.code) {
                             throw GroupException(AppContextHolder.APP_CONTEXT.getString(R.string.chats_group_name_too_long))
@@ -2383,7 +2388,7 @@ object GroupLogic {
                 .subscribe({
                     result(true, "")
                 }, {
-                    ALog.e(TAG, "updateGroup error", it)
+                    ALog.e(TAG, "updateGroupAvatar error", it)
                     result(false, GroupException.error(it, AppUtil.getString(R.string.common_error_failed)))
                 })
     }

@@ -12,7 +12,6 @@ import com.bcm.messenger.common.database.repositories.DraftRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
-import com.bcm.messenger.common.grouprepository.manager.UserDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.provider.AMESelfData
@@ -288,8 +287,9 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
 
     fun updateGroupAvatar(avatar: String, result: (succeed: Boolean, error: String?) -> Unit): Boolean {
         val weakThis = WeakReference(this)
-        return GroupLogic.updateGroup(groupId, avatar) { success, error ->
+        return GroupLogic.updateGroupAvatar(groupId, avatar) { success, error ->
             weakThis.get()?.modelCache?.info?.iconUrl = avatar
+
 
             result(success, error)
             weakThis.get()?.post(GroupInfoChangedEvent(groupId))

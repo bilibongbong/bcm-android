@@ -89,8 +89,11 @@ public interface GroupInfoDao {
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET share_link = :shareLink WHERE gid = :gid ")
     void updateShareShortLink(long gid, String shareLink);
 
-    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET name = :name, iconUrl = :icon WHERE gid = :gid ")
-    void updateNameAndAvatar(long gid, String name, String icon);
+    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET name = :name WHERE gid = :gid ")
+    void updateName(long gid, String name);
+
+    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET iconUrl = :icon WHERE gid = :gid ")
+    void updateAvatar(long gid, String icon);
 
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET member_sync_state = :syncSate WHERE gid = :gid ")
     void updateMemberSyncState(long gid, @NotNull String syncSate);
